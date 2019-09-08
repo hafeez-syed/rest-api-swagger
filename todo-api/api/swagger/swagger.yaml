@@ -1,0 +1,141 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: TODO API
+# during dev, should point to your local machine
+host: localhost:10010
+# basePath prefixes all resource paths 
+basePath: /
+# 
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+paths:
+
+  /:
+
+    get:
+      description: "Returns all todo endpoints available in the database"
+      # used as the method name of the controller
+      operationId: "GetAllTodos"
+      parameters: []
+      responses:
+        200:
+          description: "An array of Todos"
+          schema:
+            type: "array"
+            items:
+              # a pointer to a definition
+              $ref: "#/definitions/Todo"
+      x-swagger-router-controller: "GetAllTodos"
+
+    post:
+      description: "Add a new todo"
+      operationId: "AddTodo"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "todo"
+        in: "body"
+        description: "the todo to be added"
+        required: true
+        schema:
+            $ref: "#/definitions/Todo"
+      responses:
+        200:
+          description: "Todo added successfully"
+      x-swagger-router-controller: "AddTodo"
+
+  /todo/{id}:
+  
+    get:
+      description: "Returns a todo for specitic Id"
+      # used as the method name of the controller
+      operationId: "FindTodoById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of the todo to get"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Todo response"
+          schema:
+            $ref: "#/definitions/Todo"
+      x-swagger-router-controller: "FindTodoById"
+    
+    delete:
+      description: "Delete a todo by Id"
+      operationId: "DeleteTodoById"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "id of the todo to delete"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "updated_todo"
+          in: "body"
+          description: "the updated todo"
+          required: true
+          schema:
+            $ref: "#/definitions/Todo"
+      responses:
+        204:
+          description: "todo deleted"
+      x-swagger-router-controller: "DeleteTodoById"
+
+    put:
+      description: "Update a single todo by Id"
+      operationId: "UpdateTodoById"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Id of the todo being updated"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        204:
+          description: "todo deleted"
+      x-swagger-router-controller: "DeleteTodoById"
+
+  /swagger:
+    x-swagger-pipe: swagger_raw
+# complex objects have schema definitions
+definitions:
+  Todo:
+    type: object
+    properties:
+      todo_id:
+        type: integer
+        description: Id for todo
+      todo:
+        type: string
+        description: The todo item
+      datecreated:
+        type: string
+        format: date-time
+        description: Timestamp when the Todo was created. Set by the server
+      author:
+        type: string
+        description: Creator or owner of the Todo
+      duedate:
+        type: string
+        format: date-time
+        description: Whenn the Todo is due
+      completed:
+        type: boolean
+        description: Indicates whether the todo has been completed or not
+      
